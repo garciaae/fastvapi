@@ -1,0 +1,15 @@
+services:
+  ngrok:
+    image: ngrok/ngrok:latest
+    restart: unless-stopped
+    volumes:
+      - .ngrok.yml:/etc/ngrok2/ngrok.yml
+    environment:
+      - NGROK_CONFIG=/etc/ngrok2/ngrok.yml
+    env_file:
+      - .env
+    container_name: fastvapi-ngrok
+    networks: [network-fastvapi]
+    ports:
+      - "${NGROK_PORT:-4041}:4040"
+    command: ["start", "--all", "--config", "/etc/ngrok2/ngrok.yml", "--log=stdout",]

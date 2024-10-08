@@ -1,0 +1,8 @@
+authtoken: $NGROK_TOKEN
+tunnels:
+  fastvapi:
+    addr: fastvapi-fastapi:3000
+    proto: http
+    hostname: $USERNAME-fastvapi.ngrok.io
+version: "2"
+region: us

@@ -1,0 +1,45 @@
+services:
+  redis:
+    container_name: fastvapi-redis
+    image: redis/redis-stack:7.4.0-v0
+    volumes:
+      - redis-fastvapi:/data
+      - ./config/redis.conf:/etc/redis/redis.conf
+    networks: [network-fastvapi]
+    ports:
+      - "${REDIS_DOCKER_PORT:-6381}:6379"
+      - "10003:8001"
+  server:
+    container_name: fastvapi-fastapi
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - redis
+    stdin_open: true # for pdb
+    tty: true # for pdb
+    environment:
+      PYTHONUNBUFFERED: 1
+      BASE_DIR: /code
+      PYTHONPATH: /code
+    env_file:
+      - .env
+    networks: [network-fastvapi]
+    ports:
+      - "3000:3000"
+      - "5001:5000"
+    volumes:
+      - ./app:/code/app
+      - ./pyproject.toml:/code/app/pyproject.toml  # for using poetry add
+      - ./poetry.lock:/code/app/poetry.lock  # for using poetry add
+    working_dir: /code/app
+    command: ["uvicorn", "--reload", "main:app", "--host", "0.0.0.0", "--port", "3000"]
+
+networks:
+  network-fastvapi:
+    external: true
+
+volumes:
+  redis-fastvapi:
+    name: redis-fastvapi
+    external: true
