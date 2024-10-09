@@ -112,7 +112,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-.ngrok
+.ngrok.yml
+
 
 # Spyder project settings
 .spyderproject
